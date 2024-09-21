@@ -23,7 +23,7 @@ async def create(ctx, name: str, description: Option(str, required=False)):
     embed = discord.Embed(title=f"Name of your deck: {name}", description=f"Description: {description}",
                           color=discord.Color.random())
     res = cur.execute("""SELECT * FROM cardSETS WHERE userID IS ? AND setName IS ?""",
-                      (ctx.user.id, name))  # Search for user in the database
+                      (ctx.user.id, name))
     fetch = res.fetchone()
     if fetch:
         return await ctx.respond("You already have a set that's named this!", ephemeral=True)
@@ -42,7 +42,13 @@ def getSetAutocomplete(ctx: discord.AutocompleteContext):
 
 @commands.slash_command()
 async def select_set(ctx, name: Option(autocomplete=getSetAutocomplete)):
-    await ctx.respond("hi")
+    res = cur.execute("""SELECT * FROM cardSETS WHERE userID IS ? AND setName IS ?""",
+                      (ctx.user.id, name))  # Search for user in the database
+    fetch = res.fetchone()
+    if fetch:
+
+    else:
+        await ctx.respond("Invalid card set", ephemeral= True)
 
 
 # noinspection PyTypeChecker

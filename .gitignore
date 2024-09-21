@@ -1,0 +1,10 @@
+**/__pycache__/
+.idea
+*.pclprof
+Fun/data
+venv
+*.db
+**/node_modules/
+**/*.key
+**/*.csr
+**/*.
