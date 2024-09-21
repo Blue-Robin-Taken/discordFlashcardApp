@@ -32,11 +32,20 @@ async def create(ctx, name: str, description: Option(str, required=False)):
     con.commit()
     await ctx.respond(embed=embed, view=CreateDeckUI(cur, con, name))
 
-@commands.slash_command()
-async def select_set(ctx, name: Option(autocomplete=)):
 
+def getSetAutocomplete(ctx: discord.AutocompleteContext):
+    res = cur.execute("""SELECT * FROM cardSETS WHERE userID LIKE ? AND setName LIKE ? """,
+                      (str(ctx.interaction.user.id) + "%", ctx.value + "%"))  # Search for user in the database
+    returnList = [item[1] for item in res.fetchall()]  # return string values of set names
+    return list(returnList)
+
+
+@commands.slash_command()
+async def select_set(ctx, name: Option(autocomplete=getSetAutocomplete)):
+    await ctx.respond("hi")
 
 
 # noinspection PyTypeChecker
 def setup(bot: discord.bot.Bot):
     bot.add_application_command(create)
+    bot.add_application_command(select_set)
