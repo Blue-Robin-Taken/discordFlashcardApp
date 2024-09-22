@@ -30,7 +30,7 @@ async def create(ctx, name: str, description: Option(str, required=False)):
     else:
         cur.execute("""INSERT INTO cardSETS VALUES(?, ?, ?)""", (ctx.user.id, name, description))
     con.commit()
-    await ctx.respond(embed=embed, view=CreateDeckUI(cur, con, name))
+    await ctx.respond(embed=embed, view=CreateDeckUI(cur, con, name, ctx.user))
 
 
 def getSetAutocomplete(ctx: discord.AutocompleteContext):
@@ -46,9 +46,11 @@ async def select_set(ctx, name: Option(autocomplete=getSetAutocomplete)):
                       (ctx.user.id, name))  # Search for user in the database
     fetch = res.fetchone()
     if fetch:
-
+        embed = discord.Embed(title=f"Name of your deck: {fetch[1]}", description=f"Description: {fetch[2]}",
+                              color=discord.Color.random())
+        await ctx.respond(embed=embed, view=CreateDeckUI(cur, con, name, ctx.user))
     else:
-        await ctx.respond("Invalid card set", ephemeral= True)
+        await ctx.respond("Invalid card set", ephemeral=True)
 
 
 # noinspection PyTypeChecker
